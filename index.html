@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>隨機名言產生器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .icon { font-size: 48px; margin-bottom: 24px; }
+
+    #quote {
+      font-size: 1.4rem;
+      line-height: 1.7;
+      min-height: 80px;
+      margin-bottom: 20px;
+      color: #f0f0f0;
+      transition: opacity 0.3s ease;
+    }
+
+    #author {
+      font-size: 1rem;
+      color: #a0c4ff;
+      margin-bottom: 36px;
+      min-height: 24px;
+      font-style: italic;
+      transition: opacity 0.3s ease;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      padding: 14px 36px;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+    }
+
+    button:active { transform: translateY(0); }
+
+    .fade { opacity: 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">✨</div>
+    <p id="quote">點擊按鈕，獲取今日靈感</p>
+    <p id="author"></p>
+    <button onclick="newQuote()">產生名言</button>
+  </div>
+
+  <script>
+    const quotes = [
+      { text: "人生沒有彩排，每一天都是現場直播。", author: "— 佚名" },
+      { text: "成功不是終點，失敗不是終結，只有繼續前行的勇氣才是關鍵。", author: "— 邱吉爾" },
+      { text: "你不必偉大才能開始，但你必須開始才能偉大。", author: "— 雷斯·布朗" },
+      { text: "生命中最值得做的事，都不容易；最容易的事，都不值得做。", author: "— 羅斯福" },
+      { text: "每一個你不曾起舞的日子，都是對生命的辜負。", author: "— 尼采" },
+      { text: "相信自己能做到，你就已經成功一半了。", author: "— 老羅斯福" },
+      { text: "世界上最快樂的事，莫過於為理想而奮鬥。", author: "— 蘇格拉底" },
+      { text: "不要等待機會，而要創造機會。", author: "— 林肯" },
+      { text: "即使走得慢，只要不停步，終究會抵達。", author: "— 佚名" },
+      { text: "昨天是歷史，明天是謎，今天是禮物。", author: "— 愛麗絲·摩爾斯·厄爾" },
+    ];
+
+    function newQuote() {
+      const quoteEl = document.getElementById('quote');
+      const authorEl = document.getElementById('author');
+
+      quoteEl.classList.add('fade');
+      authorEl.classList.add('fade');
+
+      setTimeout(() => {
+        const q = quotes[Math.floor(Math.random() * quotes.length)];
+        quoteEl.textContent = `「${q.text}」`;
+        authorEl.textContent = q.author;
+        quoteEl.classList.remove('fade');
+        authorEl.classList.remove('fade');
+      }, 300);
+    }
+  </script>
+</body>
+</html>
