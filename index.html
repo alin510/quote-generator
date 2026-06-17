@@ -70,6 +70,31 @@
 
     .fade { opacity: 0; }
 
+    .clock {
+      font-size: 2.8rem;
+      font-weight: 200;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .clock .colon {
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .date {
+      font-size: 0.85rem;
+      color: #a0c4ff;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+
     .lab-photo {
       width: 100%;
       border-radius: 12px;
@@ -80,6 +105,8 @@
 </head>
 <body>
   <div class="card">
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
     <img src="截圖 2026-06-11 晚上8.33.48.png" alt="實驗照片" class="lab-photo" />
     <div class="icon">✨</div>
     <p id="quote">點擊按鈕，獲取今日靈感</p>
@@ -100,6 +127,20 @@
       { text: "即使走得慢，只要不停步，終究會抵達。", author: "— 佚名" },
       { text: "昨天是歷史，明天是謎，今天是禮物。", author: "— 愛麗絲·摩爾斯·厄爾" },
     ];
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock').innerHTML =
+        `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
+      const days = ['日','一','二','三','四','五','六'];
+      document.getElementById('date').textContent =
+        `${now.getFullYear()} / ${now.getMonth()+1} / ${now.getDate()}（週${days[now.getDay()]}）`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
 
     function newQuote() {
       const quoteEl = document.getElementById('quote');
