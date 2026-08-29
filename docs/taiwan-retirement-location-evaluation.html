@@ -143,6 +143,25 @@
   td.v.hi{color:var(--accent); font-weight:500}
   td.v.lo{color:var(--crit)}
 
+  /* ── towns ── */
+  .towns{margin-top:26px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+  .town{
+    background:var(--surface); border:1px solid var(--line); border-radius:5px;
+    padding:22px 22px 24px; box-shadow:var(--shadow); display:flex; flex-direction:column;
+  }
+  .town h3{font-size:20px; margin:10px 0 2px}
+  .town .where{margin:0; font-size:13px; color:var(--ink-3)}
+  .facts{margin:18px 0 0; padding:0; border-top:1px solid var(--line)}
+  .facts > div{display:grid; grid-template-columns:56px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--line)}
+  .facts dt{font-size:12px; letter-spacing:.1em; color:var(--ink-3); font-weight:700; padding-top:2px}
+  .facts dd{margin:0; font-size:14px; color:var(--ink-2); line-height:1.6}
+  .facts dd.num{font-family:"IBM Plex Mono",monospace; font-size:15px; color:var(--accent); font-weight:500}
+  .facts dd span{
+    display:block; margin-top:3px; font-family:"Noto Sans TC",sans-serif;
+    font-size:12px; color:var(--ink-3); font-weight:400; line-height:1.55;
+  }
+  .town .verdict{margin:16px 0 0; font-size:14.5px; color:var(--ink-2); line-height:1.75}
+
   /* ── checklist ── */
   .checks{margin-top:24px; display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
   .check{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:16px 18px}
@@ -236,6 +255,51 @@
   </section>
 
   <section>
+    <h2>若把空氣與氣候放到最重：鄉鎮級的三個答案</h2>
+    <p class="lead">上表以生活圈為單位。若「無污染」是第一順位，尺度要再縮小——環境部的空品資料顯示，全台 PM2.5 年均低於標準值 12 µg/m³ 的只有四個空品區：台東縣、台東關山、花蓮縣、屏東恆春。以下三處即是從中挑出、同時通過氣候與基本生活條件的鄉鎮。</p>
+
+    <div class="towns">
+      <article class="town">
+        <p class="eyebrow">空氣最純粹</p>
+        <h3>臺東縣關山鎮</h3>
+        <p class="where">含池上鄉、鹿野鄉（花東縱谷）</p>
+        <dl class="facts">
+          <div><dt>PM2.5</dt><dd class="num">全台第 2 低<span>IQAir 2025 縣市／鄉鎮排名</span></dd></div>
+          <div><dt>氣候</dt><dd>日照充足、濕度低、冬季乾爽溫和，日夜溫差大</dd></div>
+          <div><dt>代價</dt><dd>醫療最弱——關山僅有小型院區，急重症須後送台東市或花蓮</dd></div>
+        </dl>
+        <p class="verdict">全台唯一在官方統計上「鄉鎮層級」入榜空氣最佳的地方。縱谷無工業、無盆地滯留，氣候是台灣少見的乾爽型。適合健康狀況穩定、能自行開車、且以環境為絕對優先的人。</p>
+      </article>
+
+      <article class="town">
+        <p class="eyebrow">唯一不必犧牲醫療</p>
+        <h3>花蓮縣吉安鄉</h3>
+        <p class="where">緊鄰花蓮市，含壽豐鄉北段</p>
+        <dl class="facts">
+          <div><dt>PM2.5</dt><dd class="num">7.5 µg/m³<span>花蓮市 2025 年均，全國最低、年降幅 15% 居冠</span></dd></div>
+          <div><dt>氣候</dt><dd>溫暖濕潤、無酷寒；年雨量高於縱谷，梅雨與颱風季偏濕</dd></div>
+          <div><dt>代價</dt><dd>地震風險全台最高，建物耐震與保險成本須先算進去</dd></div>
+        </dl>
+        <p class="verdict">三者中唯一開車 10 分鐘內有醫學中心（花蓮慈濟）的選項，等於用最小的醫療妥協換到最好的空氣。若你已有慢性病或年過 70，三選一就是這裡。</p>
+      </article>
+
+      <article class="town">
+        <p class="eyebrow">冬天最溫暖</p>
+        <h3>屏東縣恆春鎮</h3>
+        <p class="where">含滿州鄉、車城鄉</p>
+        <dl class="facts">
+          <div><dt>PM2.5</dt><dd class="num">年均 &lt; 12<span>四個達標空品區之一；海風擴散良好，與屏東平原截然不同</span></dd></div>
+          <div><dt>氣候</dt><dd>全台最暖，冬季無寒流體感，對關節與心血管友善</dd></div>
+          <div><dt>代價</dt><dd>10–3 月落山風強勁乾燥；重症轉送高雄約 2 小時</dd></div>
+        </dl>
+        <p class="verdict">屏東縣整體 PM2.5 名列全國最高之一，但那是平原與東港一帶；恆春半島三面環海，空品自成一區。怕冷、有關節問題的人，這裡的冬天是全台最舒服的。</p>
+      </article>
+    </div>
+
+    <p class="notes"><b>兩個常見的誤選：</b>宜蘭三星、冬山空氣確實乾淨，但年雨量 2,000–3,000 mm、全年濕冷，以「氣候舒適」為條件時會被自己刷掉；南投埔里被普遍當作好山好水，實際上是盆地滯留型污染區，PM2.5 年均曾與竹山並列全國最高之列。</p>
+  </section>
+
+  <section>
     <h2>選定城市之後，真正決定生活品質的六件事</h2>
     <p class="lead">城市只是第一層篩選。同一個城市裡，這六項的差距往往比城市之間更大。</p>
     <div class="checks">
@@ -256,7 +320,7 @@
         <li><b>各面向的 0–10 分是本評估的綜合判斷值</b>，不是官方指標。它以下列公開統計為依據，再納入生活圈尺度的差異（例如高雄的醫療評分反映四家醫學中心，但空品評分反映其全國後段的 PM2.5）。</li>
         <li><b>醫療</b>：113 年度醫院評鑑全國 27 家醫學中心與 3 家準醫學中心的分區配置（中區 4、南區 2＋準 2、高屏區 4、東區 1），以及衛福部各縣市每萬人醫事人員與病床數分布。</li>
         <li><b>成本</b>：內政部 114 年第 3 季房價負擔能力統計，全國房價所得比 9.71 倍；六都房貸負擔率為台北 65.47%、新北 56.77%、台中 50.05%、高雄 41.01%、台南 39.65%、桃園 37.13%。2026 年初全國房價指數年變動率 −2.71%，南部與宜蘭走跌。</li>
-        <li><b>氣候與空品</b>：IQAir 2025 全球空氣品質報告台灣篇，全國 PM2.5 年均 13.3 µg/m³（仍高於環境部標準 12 與 WHO 建議值 5）；花蓮 7.5 µg/m³ 為全台最佳，金門、屏東東港、高雄、連江、台南為濃度最高的五處。氣候分區採中央氣象署年報：東北部年雨量 2,000–3,000 mm 全年濕潤、西南部低於 1,500 mm 且冬季乾燥日照充足。</li>
+        <li><b>氣候與空品</b>：IQAir 2025 全球空氣品質報告台灣篇，全國 PM2.5 年均 13.3 µg/m³（仍高於環境部標準 12 與 WHO 建議值 5）；PM2.5 年均最低者依序為台東縣、台東關山、花蓮市（7.5 µg/m³），金門、屏東東港、高雄、連江、台南為濃度最高的五處；全台年均低於標準值 12 的空品區僅台東縣、台東關山、花蓮縣、屏東恆春四處。南投埔里、竹山雖無工業，卻因盆地滯留長期名列全國最高的測站之列。氣候分區採中央氣象署年報：東北部年雨量 2,000–3,000 mm 全年濕潤、西南部低於 1,500 mm 且冬季乾燥日照充足。</li>
         <li><b>長照社區</b>：2025 年底全國 65 歲以上人口占 20.06%（台北 24.18% 最高、嘉義縣 24.11%、南投 22.66%、基隆 22.28%、屏東 21.84%；嘉義市 19.90%、新竹市 16.16%），對照長期照顧十年計畫 3.0（115–124 年）的資源配置。</li>
         <li><b>災害韌性</b>：以活動斷層分布、歷史震度、颱風登陸路徑、易淹水區與土壤液化潛勢的相對風險判斷，非量化模型。</li>
         <li><b>限制</b>：縣市層級的統計無法反映區內差異——同一個台南，東區與偏遠鄉鎮的醫療可近性相差極大。本表以「推薦落點」為評分對象，不是整個縣市。個人健康狀況、既有房產、家庭所在地這三項未納入模型，但實務上往往比任何一欄都重要。</li>
@@ -375,11 +439,12 @@ const CITIES = [
            "冬季強風明顯；高齡服務資源相對其他縣市較不成熟。"] },
 
   { name:"南投埔里／中興新村", area:"埔里・中興新村",
-    s:{med:5,cost:8.5,clim:8,life:5,care:5.5,risk:5.5},
-    why:["氣候溫和、空氣優於西部平原，是內陸退休的經典選擇。",
-         "房價低、環境安靜，中興新村的低密度街廓與綠帶對步行極友善。",
+    s:{med:5,cost:8.5,clim:4.5,life:5,care:5.5,risk:5.5},
+    why:["房價低、環境安靜，中興新村的低密度街廓與綠帶對步行極友善。",
+         "氣溫溫和、日夜溫差舒適，夏季比平地低 2–3 度。",
          "40–60 分鐘可下山至台中就醫。"],
-    watch:["<b>在地醫療深度不足</b>，慢性病回診與急重症都需下山。",
+    watch:["<b>「好山好水」是誤解</b>：埔里為盆地地形，西部污染物飄入後不易擴散，PM2.5 年均長期居全國前段（曾與竹山同列最高的三個測站），冬季尤其嚴重。",
+           "<b>在地醫療深度不足</b>，慢性病回診與急重症都需下山。",
            "大眾運輸薄弱，颱風與地震後的道路中斷風險較高。"] },
 ];
 
