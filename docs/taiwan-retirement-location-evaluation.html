@@ -1,0 +1,482 @@
+<title>全台退休居住地評估</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+  :root{
+    --ground:#F3F4F0; --surface:#FFFFFF; --surface-2:#FAFBF8;
+    --ink:#14231E; --ink-2:#4C5C55; --ink-3:#7B8A83;
+    --line:#DDE1DA; --line-strong:#C7CEC5;
+    --accent:#0E7C6B; --accent-soft:#DDEDE8;
+    --warn:#B57715; --crit:#A63D2E; --on-accent:#FFFFFF;
+    --shadow:0 1px 2px rgba(20,35,30,.05), 0 8px 24px rgba(20,35,30,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#101614; --surface:#171F1C; --surface-2:#1C2622;
+      --ink:#E9EFEB; --ink-2:#A7B5AE; --ink-3:#76847D;
+      --line:#26332E; --line-strong:#35443E;
+      --accent:#4CC1AB; --accent-soft:#153029;
+      --warn:#E0AB47; --crit:#E5806C; --on-accent:#0C1512;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#101614; --surface:#171F1C; --surface-2:#1C2622;
+    --ink:#E9EFEB; --ink-2:#A7B5AE; --ink-3:#76847D;
+    --line:#26332E; --line-strong:#35443E;
+    --accent:#4CC1AB; --accent-soft:#153029;
+    --warn:#E0AB47; --crit:#E5806C; --on-accent:#0C1512;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+    font-size:16px; line-height:1.75; letter-spacing:.01em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px; margin:0 auto; padding:0 22px 96px}
+  h1,h2,h3{font-family:"Noto Serif TC",Georgia,serif; font-weight:700; text-wrap:balance; line-height:1.3; margin:0}
+  .num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+  .eyebrow{
+    font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); font-weight:700; margin:0
+  }
+
+  /* ── header ── */
+  header{padding:64px 0 40px; border-bottom:1px solid var(--line)}
+  header h1{font-size:clamp(30px,5.4vw,50px); margin:14px 0 0; letter-spacing:-.01em}
+  .deck{margin:18px 0 0; font-size:18px; color:var(--ink-2); max-width:60ch}
+  .meta{margin:26px 0 0; display:flex; flex-wrap:wrap; gap:8px 20px; font-size:13px; color:var(--ink-3)}
+
+  section{padding:52px 0 0}
+  section > h2{font-size:clamp(21px,3vw,27px)}
+  .lead{margin:14px 0 0; color:var(--ink-2); max-width:68ch}
+  p{margin:14px 0 0; max-width:68ch}
+
+  /* ── thesis ── */
+  .thesis{
+    margin-top:28px; display:grid; gap:14px;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  }
+  .claim{
+    background:var(--surface); border:1px solid var(--line); border-radius:4px;
+    padding:20px 20px 22px; box-shadow:var(--shadow);
+  }
+  .claim h3{font-size:16px; margin-bottom:8px}
+  .claim p{font-size:14.5px; color:var(--ink-2); margin:0; line-height:1.7}
+
+  /* ── control panel ── */
+  .panel{
+    margin-top:26px; background:var(--surface); border:1px solid var(--line);
+    border-radius:6px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  .panel-head{
+    padding:18px 22px; border-bottom:1px solid var(--line); background:var(--surface-2);
+    display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+  }
+  .panel-head p{margin:0; font-size:13.5px; color:var(--ink-3)}
+  .presets{display:flex; flex-wrap:wrap; gap:7px}
+  .preset{
+    font:inherit; font-size:13px; font-weight:500; cursor:pointer;
+    background:transparent; color:var(--ink-2);
+    border:1px solid var(--line-strong); border-radius:999px; padding:5px 13px;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .preset:hover{border-color:var(--accent); color:var(--accent)}
+  .preset[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+
+  .sliders{padding:20px 22px; display:grid; gap:16px 30px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .slider label{display:flex; justify-content:space-between; align-items:baseline; font-size:14px; font-weight:500; gap:10px}
+  .slider .w{font-size:13px; color:var(--accent)}
+  .slider .hint{display:block; font-size:12px; color:var(--ink-3); font-weight:400; line-height:1.5; margin-top:2px}
+  input[type=range]{width:100%; accent-color:var(--accent); margin-top:8px; cursor:grab}
+  input[type=range]:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
+
+  /* ── ranking ── */
+  .rank-list{margin-top:22px; display:flex; flex-direction:column; gap:8px}
+  details.row{
+    background:var(--surface); border:1px solid var(--line); border-radius:5px;
+    overflow:hidden; transition:border-color .15s;
+  }
+  details.row[open]{border-color:var(--line-strong)}
+  details.row.top{border-left:3px solid var(--accent)}
+  summary{
+    list-style:none; cursor:pointer; padding:14px 18px;
+    display:grid; grid-template-columns:34px 1fr 130px 62px; gap:14px; align-items:center;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+  .rk{font-size:15px; color:var(--ink-3); font-weight:500}
+  .nm{font-weight:700; font-size:16px; line-height:1.4}
+  .nm small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-3); letter-spacing:.01em}
+  .bar{height:7px; background:var(--accent-soft); border-radius:99px; overflow:hidden}
+  .bar i{display:block; height:100%; background:var(--accent); border-radius:99px; transition:width .35s cubic-bezier(.2,.7,.3,1)}
+  .sc{text-align:right; font-size:16px; font-weight:500; color:var(--ink)}
+  .body{padding:2px 18px 20px 66px; border-top:1px solid var(--line); background:var(--surface-2)}
+  .body h4{margin:16px 0 4px; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-weight:700}
+  .body ul{margin:0; padding-left:18px}
+  .body li{font-size:14.5px; color:var(--ink-2); margin:4px 0; line-height:1.7}
+  .body li b{color:var(--ink); font-weight:500}
+  .dims{margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px 18px}
+  .dim{font-size:12px; color:var(--ink-3)}
+  .dim .dv{display:flex; justify-content:space-between; color:var(--ink-2); font-size:12.5px}
+  .dim .track{height:4px; background:var(--line); border-radius:99px; margin-top:4px; overflow:hidden}
+  .dim .track i{display:block; height:100%; border-radius:99px; background:var(--ink-3)}
+  .dim.good .track i{background:var(--accent)}
+  .dim.bad .track i{background:var(--crit)}
+
+  /* ── matrix ── */
+  .scroll{overflow-x:auto; margin-top:24px; border:1px solid var(--line); border-radius:5px; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; min-width:660px; font-size:14px}
+  th,td{padding:10px 12px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+  th:first-child,td:first-child{text-align:left; position:sticky; left:0; background:var(--surface)}
+  thead th{
+    font-size:12px; font-weight:700; color:var(--ink-3); letter-spacing:.06em;
+    background:var(--surface-2); border-bottom:1px solid var(--line-strong);
+  }
+  thead th:first-child{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.v{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--ink-2)}
+  td.v.hi{color:var(--accent); font-weight:500}
+  td.v.lo{color:var(--crit)}
+
+  /* ── checklist ── */
+  .checks{margin-top:24px; display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .check{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:16px 18px}
+  .check strong{display:block; font-size:14.5px; margin-bottom:5px}
+  .check span{font-size:14px; color:var(--ink-2); line-height:1.7}
+
+  /* ── notes ── */
+  .notes{margin-top:22px; font-size:13.5px; color:var(--ink-3); line-height:1.8}
+  .notes ol{padding-left:20px; margin:10px 0 0}
+  .notes li{margin:6px 0}
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb, var(--accent) 35%, transparent)}
+  a:hover{border-bottom-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--line); font-size:13px; color:var(--ink-3)}
+
+  @media (max-width:620px){
+    summary{grid-template-columns:26px 1fr 56px; gap:10px}
+    summary .bar{display:none}
+    .body{padding-left:22px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important}
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">退休居住地決策工具</p>
+    <h1>全台退休居住地評估</h1>
+    <p class="deck">沒有一個「最適合退休的城市」，只有最符合你權重的城市。這份評估把 12 個候選落點拆成六個可比較的面向，你調權重、它重新排名。</p>
+    <div class="meta">
+      <span>資料基準：2025–2026 年公開統計</span>
+      <span>候選：12 個生活圈</span>
+      <span>評分：6 面向 × 10 分制</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>三個先講清楚的結論</h2>
+    <div class="thesis">
+      <div class="claim">
+        <h3>醫療決定下限，房價決定自由度</h3>
+        <p>退休後最大的不可控支出是醫療與長照。住在離醫學中心 20 分鐘車程內，等於買了一份不用付保費的保險；而房價每便宜 500 萬，就是多出 20 年、每月兩萬的生活費。</p>
+      </div>
+      <div class="claim">
+        <h3>南部贏在整體，東部贏在單項</h3>
+        <p>高雄、台南、嘉義市在醫療、成本、機能三者同時及格；花蓮、台東的空氣與步調全台最好，但醫療深度與對外交通是實質代價。</p>
+      </div>
+      <div class="claim">
+        <h3>雙北是「有錢才成立」的答案</h3>
+        <p>台北的醫療與大眾運輸無可取代，但房貸負擔率 65.5%（全國最高）意味著：除非已持有房產，否則它會吃掉退休金的彈性。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>依你的優先順序重新排名</h2>
+    <p class="lead">先選一個接近你處境的情境，再微調滑桿。權重會自動正規化，排名即時更新。</p>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="presets" id="presets" role="group" aria-label="優先情境"></div>
+        <p>加權後總分（滿分 10）</p>
+      </div>
+      <div class="sliders" id="sliders"></div>
+    </div>
+
+    <div class="rank-list" id="ranks"></div>
+    <p class="notes">點任一列展開該地的優勢、風險與分項評分。</p>
+  </section>
+
+  <section>
+    <h2>分項評分矩陣</h2>
+    <p class="lead">10 分為該面向全台最佳，5 分為全國平均水準。綠色為該欄前三名，紅色為後三名。</p>
+    <div class="scroll">
+      <table id="matrix">
+        <thead>
+          <tr>
+            <th scope="col">生活圈</th>
+            <th scope="col">醫療</th>
+            <th scope="col">成本</th>
+            <th scope="col">氣候空品</th>
+            <th scope="col">機能交通</th>
+            <th scope="col">長照社區</th>
+            <th scope="col">災害韌性</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>選定城市之後，真正決定生活品質的六件事</h2>
+    <p class="lead">城市只是第一層篩選。同一個城市裡，這六項的差距往往比城市之間更大。</p>
+    <div class="checks">
+      <div class="check"><strong>到急診的實際車程 ≤ 20 分鐘</strong><span>用尖峰時段實測，不看地圖直線距離。心肌梗塞與中風的黃金時間以分鐘計。</span></div>
+      <div class="check"><strong>電梯與無障礙是必要條件</strong><span>65 歲能爬的四樓，78 歲爬不動。無電梯公寓是最常見、也最貴的退休選址錯誤。</span></div>
+      <div class="check"><strong>不開車也能過日子</strong><span>市場、診所、公園、郵局在步行 15 分鐘內。80 歲繳回駕照那天，生活半徑不該歸零。</span></div>
+      <div class="check"><strong>先租一年再買</strong><span>整年住過再決定：梅雨季的濕、冬季的風、夏天的西曬，看屋當天都看不出來。</span></div>
+      <div class="check"><strong>離子女／老友一小時內</strong><span>孤獨對高齡健康的風險相當於每天抽 15 支菸。社會連結不是加分項，是必要條件。</span></div>
+      <div class="check"><strong>留現金，別把退休金鎖進房子</strong><span>自備款上限抓可動用資產的六成；剩下的是醫療、看護與意外的緩衝墊。</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>方法與資料</h2>
+    <p>六個面向的權重預設為：醫療 25%、成本 20%、氣候與空品 20%、機能交通 15%、長照社區 10%、災害韌性 10%。總分為各面向評分的加權平均。</p>
+    <div class="notes">
+      <ol>
+        <li><b>各面向的 0–10 分是本評估的綜合判斷值</b>，不是官方指標。它以下列公開統計為依據，再納入生活圈尺度的差異（例如高雄的醫療評分反映四家醫學中心，但空品評分反映其全國後段的 PM2.5）。</li>
+        <li><b>醫療</b>：113 年度醫院評鑑全國 27 家醫學中心與 3 家準醫學中心的分區配置（中區 4、南區 2＋準 2、高屏區 4、東區 1），以及衛福部各縣市每萬人醫事人員與病床數分布。</li>
+        <li><b>成本</b>：內政部 114 年第 3 季房價負擔能力統計，全國房價所得比 9.71 倍；六都房貸負擔率為台北 65.47%、新北 56.77%、台中 50.05%、高雄 41.01%、台南 39.65%、桃園 37.13%。2026 年初全國房價指數年變動率 −2.71%，南部與宜蘭走跌。</li>
+        <li><b>氣候與空品</b>：IQAir 2025 全球空氣品質報告台灣篇，全國 PM2.5 年均 13.3 µg/m³（仍高於環境部標準 12 與 WHO 建議值 5）；花蓮 7.5 µg/m³ 為全台最佳，金門、屏東東港、高雄、連江、台南為濃度最高的五處。氣候分區採中央氣象署年報：東北部年雨量 2,000–3,000 mm 全年濕潤、西南部低於 1,500 mm 且冬季乾燥日照充足。</li>
+        <li><b>長照社區</b>：2025 年底全國 65 歲以上人口占 20.06%（台北 24.18% 最高、嘉義縣 24.11%、南投 22.66%、基隆 22.28%、屏東 21.84%；嘉義市 19.90%、新竹市 16.16%），對照長期照顧十年計畫 3.0（115–124 年）的資源配置。</li>
+        <li><b>災害韌性</b>：以活動斷層分布、歷史震度、颱風登陸路徑、易淹水區與土壤液化潛勢的相對風險判斷，非量化模型。</li>
+        <li><b>限制</b>：縣市層級的統計無法反映區內差異——同一個台南，東區與偏遠鄉鎮的醫療可近性相差極大。本表以「推薦落點」為評分對象，不是整個縣市。個人健康狀況、既有房產、家庭所在地這三項未納入模型，但實務上往往比任何一欄都重要。</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>資料截至 2026 年 8 月。評分為決策輔助，不構成投資或醫療建議；購屋前請以實地查訪與最新實價登錄為準。</footer>
+</div>
+
+<script>
+const DIMS = [
+  {k:"med",   n:"醫療可近性", hint:"醫學中心距離、專科深度、急重症量能", w:25},
+  {k:"cost",  n:"居住與生活成本", hint:"房價所得比、租金、日常物價", w:20},
+  {k:"clim",  n:"氣候與空氣品質", hint:"冬季濕冷、夏季酷熱、PM2.5 年均", w:20},
+  {k:"life",  n:"機能與交通", hint:"不開車的生活可行性、對外連結", w:15},
+  {k:"care",  n:"長照與社區支持", hint:"長照服務密度、社區據點、鄰里", w:10},
+  {k:"risk",  n:"災害韌性", hint:"地震、颱風、淹水、土壤液化", w:10},
+];
+
+const PRESETS = {
+  "均衡":       {med:25,cost:20,clim:20,life:15,care:10,risk:10},
+  "醫療優先":   {med:40,cost:15,clim:10,life:15,care:15,risk:5},
+  "預算優先":   {med:20,cost:40,clim:10,life:10,care:10,risk:10},
+  "空氣與環境": {med:15,cost:15,clim:40,life:10,care:5, risk:15},
+  "不開車生活": {med:25,cost:15,clim:10,life:35,care:10,risk:5},
+};
+
+const CITIES = [
+  { name:"高雄市", area:"左營・鼓山・美術館・橋頭",
+    s:{med:9.5,cost:8,clim:5.5,life:9,care:8,risk:7},
+    why:["<b>四家醫學中心</b>——高醫、高榮、高雄長庚、義大（113 年新升格），急重症與專科深度僅次於雙北。",
+         "<b>六都中房貸負擔最輕的一線城市</b>：負擔率 41%，比台北低 24 個百分點，同樣預算能買到電梯大樓而非老公寓。",
+         "捷運紅橘線＋輕軌成環，是雙北以外唯一能真正「不開車生活」的城市；冬季無寒流體感，關節友善。"],
+    watch:["空氣是最大扣分：PM2.5 年均長期居全國前五高，秋冬對慢性呼吸道疾病者不友善，室內清淨機是必需品。",
+           "夏季高溫與濕度偏高，戶外活動時段受限。"] },
+
+  { name:"臺南市", area:"東區・永康・安平",
+    s:{med:9,cost:7.5,clim:7,life:8,care:8,risk:6.5},
+    why:["成大醫院（醫學中心）＋奇美體系，東區與永康一帶醫療密度全台前段，且步行可及。",
+         "冬季乾燥、日照充足、年雨量低於 1,500 mm，是全台冬天最舒服的都會之一。",
+         "房價所得比與房貸負擔率（39.65%）皆為六都最低，2026 年房價指數還在回檔，議價空間大。"],
+    watch:["夏季酷熱期長，且 PM2.5 年均為全台最高的五處之一。",
+           "位於地震帶且部分區域土壤液化潛勢中高，選屋須查建物結構與地質圖。"] },
+
+  { name:"嘉義市", area:"東區・西區",
+    s:{med:8.5,cost:9,clim:6,life:7.5,care:8,risk:7},
+    why:["<b>醫療資源密度全台第一</b>：以每萬人病床與醫事人員計，小城市卻有聖馬爾定、嘉基、鄰近的嘉義長庚與大林慈濟（準醫學中心）。",
+         "房價為本表最低之一，同樣總價可買透天或大坪數電梯宅，退休金壓力最小。",
+         "市區平坦、範圍小，機車或步行即可完成日常；高鐵嘉義站可 1.5 小時進台北。"],
+    watch:["空品屬嘉南平原水準，冬季逆溫易累積污染。",
+           "文化與消費選擇少於六都，習慣都會生活者需要適應期。"] },
+
+  { name:"臺中市", area:"南屯・西屯・北屯・大里",
+    s:{med:9,cost:6,clim:7,life:8.5,care:7.5,risk:6.5},
+    why:["中區四家醫學中心（中榮、中國附醫、中山附醫等）密集，轉診與第二意見取得容易。",
+         "全年均溫最接近人體舒適區，冬季不濕冷、夏季略低於南部。",
+         "都會機能完整，公園綠地與長青學苑等高齡活動資源豐富。"],
+    watch:["房價已接近雙北以外最高，房貸負擔率 50%，成本優勢消失。",
+           "冬季空品在中部盆地地形下經常亮橘燈；車籠埔斷層通過部分行政區。"] },
+
+  { name:"花蓮市", area:"含吉安・壽豐",
+    s:{med:8,cost:8,clim:9,life:6,care:6.5,risk:4},
+    why:["<b>全台空氣最乾淨</b>：2025 年 PM2.5 年均 7.5 µg/m³，全國最低且年改善幅度 15% 居冠。",
+         "花蓮慈濟為東區唯一醫學中心，加上門諾體系，醫療遠優於一般非六都。",
+         "房價與生活成本低，山海環境對日常步行與情緒健康的加值難以量化但真實。"],
+    watch:["<b>地震風險為本表最高</b>：0403 地震後的建物耐震與保險成本必須納入決策。",
+           "對外交通仰賴台鐵，連假一票難求；重大手術仍可能需北上。"] },
+
+  { name:"臺北市／新北蛋黃", area:"大安・中正・板橋・新店",
+    s:{med:10,cost:3,clim:5,life:10,care:9,risk:7},
+    why:["醫學中心密度與次專科深度全台無可取代，罕見疾病與複雜手術的最後一站。",
+         "捷運＋公車＋步行即可完成所有生活；繳回駕照對生活品質幾乎沒有影響。",
+         "長照與社區據點資源、共餐與社區大學等軟性服務最完整。"],
+    watch:["<b>房貸負擔率 65.47%，全國最高。</b>沒有既有房產的話，居住成本會排擠醫療與生活彈性。",
+           "冬季濕冷、日照時數全台最少，對關節與情緒是長期負擔。"] },
+
+  { name:"屏東市／潮州", area:"屏東市區・潮州",
+    s:{med:7,cost:9,clim:6,life:6.5,care:6.5,risk:7},
+    why:["生活成本全台最低之一，物價與房價都留有餘裕。",
+         "屏基、寶建支撐日常醫療，重症 40 分鐘內可轉高雄四家醫學中心。",
+         "冬季溫暖乾燥，無寒流體感，適合心血管與關節條件較差者。"],
+    watch:["PM2.5 濃度屬全國最高族群（東港一帶尤其明顯）。",
+           "大眾運輸薄弱，實質上需要能開車或有家人接送。"] },
+
+  { name:"宜蘭", area:"羅東・宜蘭市",
+    s:{med:8,cost:6.5,clim:6.5,life:7,care:7.5,risk:6.5},
+    why:["羅東博愛、聖母、陽大附醫三足鼎立，非六都中醫療最扎實的區域之一。",
+         "空品優於西部，溫泉、平原與慢步調生活是實質吸引力。",
+         "雪隧一小時回到台北，探親與就醫的後援線很短。"],
+    watch:["<b>年雨量 2,000–3,000 mm、全年濕潤</b>，冬季東北季風濕冷，是關節與黴敏感者的硬傷。",
+           "雪隧通車後房價偏高，成本效益不如南部。"] },
+
+  { name:"桃園市", area:"藝文特區・中壢",
+    s:{med:7.5,cost:6.5,clim:5.5,life:8,care:7,risk:8},
+    why:["林口長庚在 30 分鐘車程內，醫療後盾強；區域醫院密度亦足。",
+         "機捷與高鐵讓對外連結便利，適合仍需往返雙北的半退休族。",
+         "地震與颱風相對風險為本表最低之一。"],
+    watch:["冬季陰雨與工業區空品拉低宜居分數。",
+           "生活圈仍以汽車為主，市區外行人環境不佳。"] },
+
+  { name:"臺東市", area:"臺東市・卑南",
+    s:{med:5.5,cost:8.5,clim:9,life:5,care:5.5,risk:5.5},
+    why:["氣候與空氣品質全台頂級，日照充足、冬季溫暖，生活步調最鬆。",
+         "房價與物價低，同樣退休金的實質購買力最高。",
+         "海岸與縱谷提供每日可及的戶外活動。"],
+    watch:["<b>無醫學中心</b>，重症需後送花蓮或高雄，是本表最重的結構性缺點。",
+           "對外交通與生活選擇有限，醫療與照護人力長期不足。"] },
+
+  { name:"新竹市", area:"東區・竹北鄰近",
+    s:{med:7.5,cost:4.5,clim:6,life:7.5,care:6,risk:7.5},
+    why:["城市年輕、公共建設新，醫療（馬偕、台大新竹分院）持續擴充。",
+         "生活機能與消費選擇完整，子女多在此工作者可就近同住。",
+         "高齡人口比例全台第二低，公共資源尚未被排隊擠滿。"],
+    watch:["房價高、成本效益差，是本表在成本面最弱的非雙北城市。",
+           "冬季強風明顯；高齡服務資源相對其他縣市較不成熟。"] },
+
+  { name:"南投埔里／中興新村", area:"埔里・中興新村",
+    s:{med:5,cost:8.5,clim:8,life:5,care:5.5,risk:5.5},
+    why:["氣候溫和、空氣優於西部平原，是內陸退休的經典選擇。",
+         "房價低、環境安靜，中興新村的低密度街廓與綠帶對步行極友善。",
+         "40–60 分鐘可下山至台中就醫。"],
+    watch:["<b>在地醫療深度不足</b>，慢性病回診與急重症都需下山。",
+           "大眾運輸薄弱，颱風與地震後的道路中斷風險較高。"] },
+];
+
+let weights = Object.assign({}, PRESETS["均衡"]);
+let activePreset = "均衡";
+
+const $ = (id) => document.getElementById(id);
+
+function score(c){
+  let sum = 0, tot = 0;
+  for (const d of DIMS){ sum += weights[d.k] * c.s[d.k]; tot += weights[d.k]; }
+  return tot ? sum / tot : 0;
+}
+
+function buildPresets(){
+  $("presets").innerHTML = Object.keys(PRESETS).map(n =>
+    `<button class="preset" type="button" data-p="${n}" aria-pressed="${n===activePreset}">${n}</button>`
+  ).join("");
+  $("presets").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    activePreset = b.dataset.p;
+    weights = Object.assign({}, PRESETS[activePreset]);
+    buildPresets(); syncSliders(); render();
+  }));
+}
+
+function buildSliders(){
+  $("sliders").innerHTML = DIMS.map(d => `
+    <div class="slider">
+      <label for="sl-${d.k}">
+        <span>${d.n}<span class="hint">${d.hint}</span></span>
+        <span class="w num" id="wv-${d.k}">${weights[d.k]}</span>
+      </label>
+      <input type="range" id="sl-${d.k}" min="0" max="50" step="1" value="${weights[d.k]}"
+             aria-label="${d.n}權重">
+    </div>`).join("");
+  DIMS.forEach(d => $("sl-"+d.k).addEventListener("input", e => {
+    weights[d.k] = +e.target.value;
+    $("wv-"+d.k).textContent = e.target.value;
+    activePreset = null; buildPresets(); render();
+  }));
+}
+
+function syncSliders(){
+  DIMS.forEach(d => { $("sl-"+d.k).value = weights[d.k]; $("wv-"+d.k).textContent = weights[d.k]; });
+}
+
+function render(){
+  const ranked = CITIES.map(c => ({c, v: score(c)})).sort((a,b) => b.v - a.v);
+  const max = ranked[0].v || 10;
+  $("ranks").innerHTML = ranked.map((r, i) => {
+    const c = r.c;
+    const dims = DIMS.map(d => {
+      const v = c.s[d.k];
+      const cls = v >= 8.5 ? "good" : (v <= 5.5 ? "bad" : "");
+      return `<div class="dim ${cls}">
+        <div class="dv"><span>${d.n}</span><span class="num">${v.toFixed(1)}</span></div>
+        <div class="track"><i style="width:${v*10}%"></i></div>
+      </div>`;
+    }).join("");
+    return `<details class="row${i < 3 ? " top" : ""}"${i === 0 ? " open" : ""}>
+      <summary>
+        <span class="rk num">${String(i+1).padStart(2,"0")}</span>
+        <span class="nm">${c.name}<small>${c.area}</small></span>
+        <span class="bar"><i style="width:${(r.v/max)*100}%"></i></span>
+        <span class="sc num">${r.v.toFixed(2)}</span>
+      </summary>
+      <div class="body">
+        <h4>為什麼列入</h4>
+        <ul>${c.why.map(x => `<li>${x}</li>`).join("")}</ul>
+        <h4>要注意什麼</h4>
+        <ul>${c.watch.map(x => `<li>${x}</li>`).join("")}</ul>
+        <div class="dims">${dims}</div>
+      </div>
+    </details>`;
+  }).join("");
+}
+
+function buildMatrix(){
+  const rows = CITIES.slice().sort((a,b) => score(b) - score(a));
+  const cuts = {};
+  DIMS.forEach(d => {
+    const vals = CITIES.map(c => c.s[d.k]).sort((a,b) => b-a);
+    cuts[d.k] = {hi: vals[2], lo: vals[vals.length-3]};
+  });
+  document.querySelector("#matrix tbody").innerHTML = rows.map(c => `
+    <tr>
+      <td>${c.name}</td>
+      ${DIMS.map(d => {
+        const v = c.s[d.k];
+        const cls = v >= cuts[d.k].hi ? " hi" : (v <= cuts[d.k].lo ? " lo" : "");
+        return `<td class="v${cls}">${v.toFixed(1)}</td>`;
+      }).join("")}
+    </tr>`).join("");
+}
+
+buildPresets();
+buildSliders();
+render();
+buildMatrix();
+</script>
